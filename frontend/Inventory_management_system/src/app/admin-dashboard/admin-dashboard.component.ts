@@ -219,7 +219,6 @@
 
 
 
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../services/user.service';
@@ -227,217 +226,222 @@ import { OutletService } from '../services/outlet.service';
 import { Router } from '@angular/router';
 
 @Component({
- selector: 'app-admin-dashboard',
- templateUrl: './admin-dashboard.component.html',
- styleUrls: ['./admin-dashboard.component.css']
+  selector: 'app-admin-dashboard',
+  templateUrl: './admin-dashboard.component.html',
+  styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
- userForm!: FormGroup;
- outletForm!: FormGroup;
+  userForm!: FormGroup;
+  outletForm!: FormGroup;
 
- users: any[] = [];
- filteredUsers: any[] = [];
- dropdownOpen: boolean = false;
- 
+  users: any[] = [];
+  filteredUsers: any[] = [];
+  dropdownOpen: boolean = false;
 
- outlets: any[] = [];
- filteredOutlets: any[] = [];
+  outlets: any[] = [];
+  filteredOutlets: any[] = [];
 
- showUsers: boolean = true;
- showUserForm: boolean = false;
- showOutletForm: boolean = false;
- showOutletList: boolean = false;
+  showUsers: boolean = true;
+  showUserForm: boolean = false;
+  showOutletForm: boolean = false;
+  showOutletList: boolean = false;
 
- searchQuery: string = '';
- outletSearchQuery: string = '';
- address: string='';
+  searchQuery: string = '';
+  outletSearchQuery: string = '';
 
- editingUser: any = null;
- editingOutlet: any = null;
+  editingUser: any = null;
+  editingOutlet: any = null;
 
- constructor(
-   private fb: FormBuilder,
-   private userService: UserService,
-   private outletService: OutletService,
-   private router: Router
- ) {}
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private outletService: OutletService,
+    private router: Router
+  ) {}
 
- ngOnInit(): void {
-   this.userForm = this.fb.group({
-     username: ['', Validators.required],
-     email: ['', [Validators.required, Validators.email]],
-     role: ['', Validators.required],
-     password: ['', Validators.required],
-   });
+  ngOnInit(): void {
+    this.userForm = this.fb.group({
+      username: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      role: ['', Validators.required],
+      password: ['', Validators.required],
+    });
 
-   this.outletForm = this.fb.group({
-     name: ['', Validators.required],
-     address: ['', Validators.required],
-   });
+    this.outletForm = this.fb.group({
+      name: ['', Validators.required],
+      address: ['', Validators.required],
+    });
 
-   this.getUsers();
-   this.getOutlets();
- }
+    this.getUsers();
+    this.getOutlets();
+  }
 
- getUsers() {
-   this.userService.getUsers().subscribe((res: any) => {
-     this.users = res;
-     this.filteredUsers = res;
-   });
- }
+  // Fetch users and initialize filtered list
+  getUsers() {
+    this.userService.getUsers().subscribe((res: any) => {
+      this.users = res;
+      this.filteredUsers = res;
+    });
+  }
 
- getOutlets() {
-   this.outletService.getAllOutlets().subscribe((res: any) => {
-     this.outlets = res;
-     this.filteredOutlets = res;
-     this.address = res.location;
-   });
- }
+  // Fetch outlets and initialize filtered list
+  getOutlets() {
+    this.outletService.getAllOutlets().subscribe((res: any) => {
+      this.outlets = res;
+      this.filteredOutlets = res;
+    });
+  }
 
- showAddUserForm(role: string) {
-   this.userForm.reset();
-   this.userForm.patchValue({ role });
-   this.editingUser = null;
-   this.showUserForm = true;
-   this.showUsers = false;
-   this.showOutletForm = false;
-   this.showOutletList = false;
- }
+  showAddUserForm(role: string) {
+    this.userForm.reset();
+    this.userForm.patchValue({ role });
+    this.editingUser = null;
+    this.showUserForm = true;
+    this.showUsers = false;
+    this.showOutletForm = false;
+    this.showOutletList = false;
+  }
 
- editUser(user: any) {
-   this.userForm.patchValue({
-     username: user.username,
-     email: user.email,
-     role: user.role,
-     password: '' // force new password
-   });
-   this.editingUser = user;
-   this.showUserForm = true;
-   this.showUsers = false;
-   this.showOutletForm = false;
-   this.showOutletList = false;
- }
+  editUser(user: any) {
+    this.userForm.patchValue({
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      password: '' // force new password entry
+    });
+    this.editingUser = user;
+    this.showUserForm = true;
+    this.showUsers = false;
+    this.showOutletForm = false;
+    this.showOutletList = false;
+  }
 
- onSubmitUser() {
-   if (this.userForm.invalid) {
-     alert('Please fill all the details');
-     return;
-   }
+  onSubmitUser() {
+    if (this.userForm.invalid) {
+      alert('Please fill all the details');
+      return;
+    }
 
-   const userData = this.userForm.value;
+    const userData = this.userForm.value;
 
-   if (this.editingUser) {
-     this.userService.updateUser(this.editingUser._id, userData).subscribe(() => {
-       this.getUsers();
-       this.cancelForm();
-     });
-   } else {
-     this.userService.createUser(userData).subscribe(() => {
-       this.getUsers();
-       this.cancelForm();
-     });
-   }
- }
+    if (this.editingUser) {
+      this.userService.updateUser(this.editingUser._id, userData).subscribe(() => {
+        this.getUsers();
+        this.cancelForm();
+      }, (error) => {
+        alert('Failed to update user.');
+        console.error(error);
+      });
+    } else {
+      this.userService.createUser(userData).subscribe(() => {
+        this.getUsers();
+        this.cancelForm();
+      }, (error) => {
+        alert('Failed to add user.');
+        console.error(error);
+      });
+    }
+  }
 
- cancelForm() {
-   this.showUserForm = false;
-   this.showUsers = true;
- }
+  cancelForm() {
+    this.showUserForm = false;
+    this.showUsers = true;
+    this.showOutletForm = false;
+    this.showOutletList = false;
+    this.editingUser = null;
+    this.editingOutlet = null;
+  }
 
- confirmDelete(userId: string) {
-   if (confirm('Are you sure you want to delete this user?')) {
-     this.userService.deleteUser(userId).subscribe(() => {
-       this.getUsers();
-     });
-   }
- }
+  confirmDelete(userId: string) {
+    if (confirm('Are you sure you want to delete this user?')) {
+      this.userService.deleteUser(userId).subscribe(() => {
+        this.getUsers();
+      }, (error) => {
+        alert('Failed to delete user.');
+        console.error(error);
+      });
+    }
+  }
 
- onSearch() {
-   const query = this.searchQuery.toLowerCase();
-   this.filteredUsers = this.users.filter(user =>
-     user.username.toLowerCase().includes(query) || user.email.toLowerCase().includes(query)
-   );
- }
+  onSearch() {
+    const query = this.searchQuery.toLowerCase();
+    this.filteredUsers = this.users.filter(user =>
+      user.username.toLowerCase().includes(query) || user.email.toLowerCase().includes(query)
+    );
+  }
 
- toggleOutletList() {
-   this.showOutletList = !this.showOutletList;
-   this.showUsers = false;
-   this.showUserForm = false;
-   this.showOutletForm = false;
- }
+  toggleOutletList() {
+    this.showOutletList = !this.showOutletList;
+    this.showUsers = !this.showOutletList;
+    this.showUserForm = false;
+    this.showOutletForm = false;
+  }
 
- showAddOutletForm() {
-   this.outletForm.reset();
-   this.editingOutlet = null;
-   this.showOutletForm = true;
-   this.showOutletList = false;
-   this.showUsers = false;
-   this.showUserForm = false;
- }
+  showAddOutletForm() {
+    this.outletForm.reset();
+    this.editingOutlet = null;
+    this.showOutletForm = true;
+    this.showOutletList = false;
+    this.showUsers = false;
+    this.showUserForm = false;
+  }
 
- editOutlet(outlet: any) {
-   this.outletForm.patchValue(outlet);
-   this.editingOutlet = outlet;
-   this.showOutletForm = true;
-   this.showOutletList = false;
-   this.showUsers = false;
-   this.showUserForm = false;
- }
+  editOutlet(outlet: any) {
+    this.outletForm.patchValue({
+      name: outlet.name,
+      address: outlet.address
+    });
+    this.editingOutlet = outlet;
+    this.showOutletForm = true;
+    this.showOutletList = false;
+    this.showUsers = false;
+    this.showUserForm = false;
+  }
 
- onSubmitOutlet() {
-   if (this.outletForm.invalid) {
-     alert('Please fill all the details');
-     return;
-   }
+  onSubmitOutlet() {
+    if (this.outletForm.invalid) {
+      alert('Please fill all the details');
+      return;
+    }
 
-   const outletData = this.outletForm.value;
+    const outletData = this.outletForm.value;
 
-   if (this.editingOutlet) {
-     this.outletService.updateOutlet(this.editingOutlet._id, outletData).subscribe(() => {
-      next: ()=>{
+    if (this.editingOutlet) {
+      this.outletService.updateOutlet(this.editingOutlet._id, outletData).subscribe(() => {
         this.getOutlets();
-       this.showOutletForm = false;
-       this.outletForm.reset();
-       this.editingOutlet = null;
-       
-      }
-      error: (error:any)=>{
-        console.error('error updating outlet',error)
-      }
-      alert("successfully added outlet")
-       
-     });
-   } else {
-     this.outletService.createOutlet(outletData).subscribe(() => {
-      next:{
-         this.getOutlets();
-       this.showOutletForm = false;
-        this.outletForm.reset();
-      }
-      error:(error:any)=>{
-        console.error('Error adding outlet:',error)
-      }
-      
-     });
-   }
- }
+        alert('Outlet updated successfully');
+        this.cancelForm();
+      }, (error) => {
+        alert('Failed to update outlet.');
+        console.error(error);
+      });
+    } else {
+      this.outletService.createOutlet(outletData).subscribe(() => {
+        this.getOutlets();
+        alert('Outlet added successfully');
+        this.cancelForm();
+      }, (error) => {
+        alert('Failed to add outlet.');
+        console.error(error);
+      });
+    }
+  }
 
- toggleDropdown(event: MouseEvent): void {
- event.stopPropagation(); // Prevents click from propagating to document
- this.dropdownOpen = !this.dropdownOpen;
-}
+  toggleDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.dropdownOpen = !this.dropdownOpen;
+  }
 
- 
+  onOutletSearch() {
+    const query = this.outletSearchQuery.toLowerCase();
+    this.filteredOutlets = this.outlets.filter(outlet =>
+      outlet.name.toLowerCase().includes(query) ||
+      outlet.address.toLowerCase().includes(query)
+    );
+  }
 
- onOutletSearch() {
-   const query = this.outletSearchQuery.toLowerCase();
-   this.filteredOutlets = this.outlets.filter(outlet =>
-     outlet.name.toLowerCase().includes(query)
-   );
- }
-
- logout() {
-   sessionStorage.clear();
-   this.router.navigate(['/']);
- }
+  logout() {
+    sessionStorage.clear();
+    this.router.navigate(['/']);
+  }
 }

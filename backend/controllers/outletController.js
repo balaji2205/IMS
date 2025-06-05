@@ -1,8 +1,11 @@
 const Outlet = require('../models/outlet');
 
 exports.getAllOutlets = async (req, res) => {
-  try {
-    const outlets = await Outlet.find();
+   try {
+    const outlets = await Outlet.find()
+      .populate('manager', 'username email')  // populate with limited fields
+      .populate('staff', 'username email');
+
     res.json(outlets);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -11,7 +14,14 @@ exports.getAllOutlets = async (req, res) => {
 
 exports.createOutlet = async (req, res) => {
   try {
-    const outlet = new Outlet(req.body);
+    const { name, location, manager, staff } = req.body;
+
+    // Basic validation
+    if (!name || !location || !manager || !staff) {
+      return res.status(400).json({ error: "Please provide name, location, manager and staff." });
+    }
+
+    const outlet = new Outlet({ name, location, manager, staff });
     await outlet.save();
     res.status(201).json(outlet);
   } catch (error) {

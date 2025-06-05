@@ -41,3 +41,12 @@ exports.deleteUser = async (req, res) => {
     res.status(400).json({ message: 'User deletion failed' });
   }
 };
+exports.getUsersByRole = async (req, res) => {
+  try {
+    const role = req.params.role;
+    const users = await User.find({ role, isActive: true }, 'username email');
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
