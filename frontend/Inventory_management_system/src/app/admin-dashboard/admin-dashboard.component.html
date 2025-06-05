@@ -1,0 +1,116 @@
+<div class="sidebar text-white d-flex flex-column p-3" style="width: 220px; height: 100vh; position: fixed;">
+ <h4 class="mb-4">
+   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+     <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+   </svg> Menu
+ </h4>
+ <!-- User buttons -->
+ <button class="btn btn-outline-light mb-3" (click)="showAddUserForm('manager')">Add Manager</button>
+ <button class="btn btn-outline-light mb-3" (click)="showAddUserForm('staff')">Add Staff</button>
+
+ <!-- New Outlet buttons -->
+ <button class="btn btn-outline-light mb-3" (click)="showAddOutletForm()">Add Outlet</button>
+ <button class="btn btn-outline-light mb-3" (click)="toggleOutletList()">View Outlets</button>
+
+ <button class="btn btn-danger mt-auto" (click)="logout()">Logout</button>
+</div>
+
+<div style="margin-left: 240px; padding: 20px;">
+ <header class="navbar navbar-expand-lg custom-navbar">
+   <div class="container-fluid px-0">
+     <div class="navbar-left">
+       <h1 class="navbar-brand m-0 text-white"> Admin Dashboard</h1>
+     </div>
+     <div class="navbar-right ms-auto position-relative" (click)="toggleDropdown($event)" style="cursor: pointer;">
+       <img src="assets/manager.jpg" alt="Admin" class="profile-icon rounded-circle">
+     </div>
+   </div>
+ </header>
+
+ <div class="search-container mb-3">
+   <input type="text" [(ngModel)]="searchQuery" placeholder="Search users..." class="form-control mb-2" (input)="onSearch()" />
+ </div>
+
+ <!-- User Cards Section -->
+ <div *ngIf="showUsers" class="user-cards-container row mt-4">
+   <div class="col-md-4 mb-4" *ngFor="let user of filteredUsers">
+     <div class="card user-card h-100 shadow-sm">
+       <div class="card-body text-center">
+         <img [src]="'assets/sample.jpg'" alt="{{ user.username }}" class="rounded-circle mb-3" width="80" height="80">
+         <h5 class="card-title">{{ user.username }}</h5>
+         <p class="card-text text-muted">{{ user.email }}</p>
+         <span class="badge custom-role-badge text-capitalize">{{ user.role }}</span>
+
+         <div class="mt-3">
+           <button class="btn btn-sm btn-outline-primary me-2" (click)="editUser(user)">Edit</button>
+           <button *ngIf="user.role.toLowerCase() !== 'admin'" class="btn btn-sm btn-outline-danger" (click)="confirmDelete(user._id)">Delete</button>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+
+ <!-- Add/Edit User Form -->
+ <div *ngIf="showUserForm" class="mt-4">
+   <form [formGroup]="userForm" (ngSubmit)="onSubmitUser()">
+     <div class="mb-3">
+       <label for="username" class="form-label">Username</label>
+       <input id="username" type="text" class="form-control" formControlName="username" style="width: 300px; height: 30px;" />
+     </div>
+     <div class="mb-3">
+       <label for="email" class="form-label">Email</label>
+       <input id="email" type="email" class="form-control" formControlName="email" style="width: 300px; height: 30px;" />
+     </div>
+     <div class="mb-3">
+       <label for="role" class="form-label">Role</label>
+       <input id="role" type="text" class="form-control text-capitalize" formControlName="role" readonly style="width: 300px; height: 30px;" />
+     </div>
+     <div class="mb-3">
+       <label for="password" class="form-label">Password</label>
+       <input id="password" type="password" class="form-control" formControlName="password" style="width: 300px; height: 30px;" />
+     </div>
+     <button type="submit" class="btn btn-primary me-2">Save</button>
+     <button type="button" class="btn btn-secondary" (click)="cancelForm()">Cancel</button>
+   </form>
+ </div>
+
+ <!-- Outlet Section -->
+ <div *ngIf="showOutletList" class="mt-4">
+   <h3>Outlets</h3>
+
+   <div class="mb-3">
+     <input type="text" [(ngModel)]="outletSearchQuery" placeholder="Search outlets..." class="form-control mb-2" (input)="onOutletSearch()" />
+   </div>
+
+   <div class="row">
+     <div class="col-md-4 mb-3" *ngFor="let outlet of filteredOutlets">
+       <div class="card h-100 shadow-sm">
+         <div class="card-body text-center">
+           <h5 class="card-title">{{ outlet.name }}</h5>
+           <h5 class="card-text">{{ outlet.location }}</h5>
+           <div class="mt-3">
+             <button class="btn btn-sm btn-outline-primary me-2" (click)="editOutlet(outlet)">Edit</button>
+             <!-- <button class="btn btn-sm btn-outline-danger" (click)="confirmDeleteOutlet(outlet._id)">Delete</button> -->
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+
+ <!-- Add/Edit Outlet Form -->
+ <div  class="mt-4">
+   <form *ngIf="showOutletForm" [formGroup]="outletForm" (ngSubmit)="onSubmitOutlet()">
+     <div class="form-group mb-3">
+       <label for="outletName" class="form-label">Outlet Name</label>
+       <input id="outletName" type="text" class="form-control" formControlName="name" style="width: 300px; height: 30px;" />
+     </div>
+     <div class="mb-3">
+       <label for="outletAddress" class="form-label">Address</label>
+       <textarea id="outletAddress" class="form-control" formControlName="address" style="width: 300px;"></textarea>
+     </div>
+     <button type="submit" class="btn btn-primary me-2">Save</button>
+     <!-- <button type="button" class="btn btn-secondary" (click)="cancelOutletForm()">Cancel</button> -->
+   </form>
+ </div>
+</div>

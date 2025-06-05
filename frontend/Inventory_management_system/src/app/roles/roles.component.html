@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMS</title>
+  
+</head>
+<nav class="navbar custom-navbar">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 text-white"><b>Inventory Management System</b></span>
+    </div>
+</nav>
+<body>
+    <div class="background">
+      <div class="d-flex justify-content-center align-items-center vh-100">
+           <div class="container-box text-center"  > 
+           <div class="text-center">
+            <h3 class="mb-4 fw-bold text-white">YOUR ROLE ?</h3>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <button class="role-card p-4" onclick="showLogin('Admin')" [routerLink]="['/login', 'admin']" >
+                    <div class="role-icon">🖥️</div>
+                    <div class="role-name">Admin</div>
+                </button>
+
+                <button class="role-card" onclick="showLogin('Manager')" [routerLink]="['/login', 'manager']">
+                    <div class="role-icon">💼</div>
+                    <div class="role-name">Manager</div>
+                </button>
+
+                <button class="role-card" onclick="showLogin('Staff')" [routerLink]="['/login', 'staff']">
+                    <div class="role-icon">👨‍🔧</div>
+                    <div class="role-name">Staff</div>
+                </button>
+            </div>
+
+            <p class="desc-text mt-3 text-white">
+                Select your role !
+            </p>
+        </div>
+     </div>
+    </div>
+</div>
+            <!-- <button class="btn btn-info w-100 mb-3" onclick="showLogin('Admin')" [routerLink]="['/login', 'admin']">Admin</button> <br>
+            <button class="btn btn-info w-100 mb-3" onclick="showLogin('Manager')" [routerLink]="['/login', 'manager']">Manager</button> <br>
+            <button class="btn btn-info w-100 " onclick="showLogin('Staff')" [routerLink]="['/login', 'staff']">Staff</button> <br> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+<div id="tsparticles"></div>
+
+<style>
+    #tsparticles{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+</style>
+
+<script>
+    tsParticles.load("tsparticles",{
+        background:{
+            color:"#0f2027",
+        },
+        particles:{
+            number:{
+                value:60,
+            },
+            size:{
+                value:3,
+            },
+            move:{
+                speed:1,
+            },
+            links:{
+                enable:true,
+                distance:150,
+            },
+        },
+     });
+  </script> -->
+
+</body>
+</html>

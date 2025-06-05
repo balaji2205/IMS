@@ -1,0 +1,112 @@
+.background{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    /* background: linear-gradient(135deg, #215273, #55c595, #9fdda4); */
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+    z-index: -1;
+    background-color: #13395e;
+}
+
+@keyframes gradientShift {
+    0%{
+        background-position: 0% 50%;
+    }
+    50%{
+        background-position: 100% 50%;
+    }
+    100%{
+        background-position: 0% 50%;
+    }
+}
+
+.container-box{
+    backdrop-filter: blur(15px);
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    padding: 50px 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    max-width: 850px;
+    width: 100%;
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-card{
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+
+}
+
+.role-card{
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.4 ease;
+    background: rgba(255, 255, 255, 0.4);
+    width: 180px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: 20px;
+}
+
+.role-card:hover{
+    border-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.15);
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+.role-icon{
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.role-name{
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.desc-text{
+    color: #333;
+    font-size: 0.95rem;
+    margin-top: 30px;
+}
+
+@keyframes fadeInUp{
+    from{
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to{
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+}
+
+.custom-navbar{
+    /* background: linear-gradient(135deg, #215273, #55c595, #9fdda4); */
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #13395e;
+}
+
+* {
+    color: white !important;
+    -webkit-text-stroke: 0.15px black;
+    text-shadow:
+    1px 1px 0 black;
+     
+}
