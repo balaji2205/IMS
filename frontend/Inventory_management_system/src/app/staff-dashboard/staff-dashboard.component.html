@@ -1,98 +1,205 @@
 <!-- Top Navbar -->
+
 <header class="navbar navbar-dark  px-3">
+
   <h4 class="mb-4" id="menu">
+
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+
       <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+
     </svg> <span (click)="tograph()"> Menu</span>
+
   </h4>
-  <h1 class="navbar-brand m-0" ><span id="navText">Staff Dashboard</span> </h1>
+
+  <h1 class="navbar-brand m-0" ><span id="navText">Staff Dashboard :  {{outletName}}</span> </h1>
+
   <div class="ms-auto position-relative" (click)="toggleDropdown($event)">
+
     <img src="assets/staff.png" alt="Staff" class="profile-icon" />
+
   </div>
+
 </header>
 
+
+ 
+
 <!-- Dashboard Layout -->
+
 <div class="dashboard-container">
+
   <!-- Sidebar -->
+
   <aside class="sidebar d-flex flex-column justify-content-between">
+
     <div>
-      
+
+     
+
       <h4 class="text-white mt-4 text-center"><span id="sideText">Categories</span> </h4>
+
       <ul class="list-unstyled p-2">
+
         <li *ngFor="let category of categories" (click)="toggleProducts(category)" class="sidebar-item">
+
           {{ category.name }}
+
         </li>
+
       </ul>
+
     </div>
-  
+
+
+
     <!-- Logout Button at Bottom -->
+
     <div class="p-2 text-center">
+
       <button class="btn btn-danger w-100" (click)="logout()">Logout</button>
+
     </div>
+
   </aside>
-  
+
+
+
+
+ 
 
   <!-- Main Content -->
+
   <main class="main-content">
+
     <!-- Overview Section -->
+
     <div *ngIf="!selectedCategoryId">
+
       <div class="row mb-4">
+
         <div class="col-md-6">
+
           <div class="card text-bg-primary p-3">
+
             <h5>Total Categories</h5>
+
             <h2>{{ totalCategories }}</h2>
+
           </div>
+
         </div>
+
         <div class="col-md-6">
+
           <div class="card text-bg-success p-3">
+
             <h5>Total Products</h5>
+
             <h2>{{ totalProducts }}</h2>
+
           </div>
+
         </div>
+
       </div>
+
+
+ 
 
       <div class="card p-4" style="display: block;">
+
         <h4 class="mb-3">Stock Distribution by Category</h4>
+
         <canvas baseChart
+
                 [data]="{ labels: stockChartLabels, datasets: stockChartData }"
+
                 [type]="'bar'">
+
         </canvas>
+
       </div>
+
     </div>
+
+
+ 
 
     <!-- Category Product Section -->
+
     <div *ngIf="selectedCategoryId" class="mt-4">
+
       <h3 style="color: blue;"
+
       class="text-secondary mb-3">Products in {{ selectedCategoryName }}</h3>
 
+
+ 
+
       <div class="mb-3">
+
         <button class="btn btn-outline-primary me-2" (click)="showStockForm('in')">Stock In</button>
+
         <button class="btn btn-outline-danger" (click)="showStockForm('out')">Stock Out</button>
+
       </div>
+
+
+ 
 
       <!-- Stock Form -->
+
       <div *ngIf="stockFormVisible" class="card p-4 shadow-sm mb-4">
+
         <div class="row g-3 mb-3">
+
           <div class="col-md-5">
+
             <input type="text" class="form-control" placeholder="Search Products"
+
                    [(ngModel)]="searchQuery" (input)="onSearch()" />
+
           </div>
+
         </div>
+
+
+ 
 
         <div class="row g-4">
+
           <div class="col-md-4" *ngFor="let product of filteredProducts">
+
             <div class="gradient-card p-3">
+
               <h5 class="fw-bold">{{ product.name }}</h5>
+
               <label class="form-label">Available Stock</label>
+
               <input type="number" class="form-control" [(ngModel)]="product.stock" />
+
             </div>
+
           </div>
+
         </div>
 
+
+ 
+
         <div class="text-center mt-4">
+
           <button class="btn btn-success" (click)="updateStock()">Update Stocks</button>
+
         </div>
+
       </div>
+
     </div>
+
   </main>
+
 </div>
+
+

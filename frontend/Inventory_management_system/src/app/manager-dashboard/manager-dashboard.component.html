@@ -1,140 +1,311 @@
 <!-- Sidebar Navigation -->
+
 <div class="sidebar text-white d-flex flex-column p-3" style="width: 220px; height: 100vh; position: fixed;">
+
     <h4 class="mb-4">
+
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+
         <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+
       </svg> Menu
+
     </h4>
-  
+
+
+
     <button class="btn btn-outline-light mb-3" (click)="showCategories()">Categories</button>
-  
+
+
+
     <!-- Add Product Button with Tooltip and same size -->
-    <span 
+
+    <span
+
       [title]="!selectedCategoryId ? 'Please Select Category' : 'Click to add product'"
+
       class="d-grid w-100 mb-3"
+
     >
+
       <button
+
         class="btn btn-outline-light"
+
         [ngClass]="!selectedCategoryId ? 'btn-secondary' : 'btn-outline-primary'"
+
         [disabled]="!selectedCategoryId"
+
         (click)="showAddProductForm()"
+
       >
+
         Add Product
+
       </button>
+
     </span>
-  
+
+    <button class="btn btn-outline-light" (click)="generateReport()">Generate report</button> <br>
+
+
+ 
+
+    <button (click)="toggleLowStockVisibility()" class="btn btn-warning">
+
+      Show Low Stock
+
+    </button>
+
+   
+
+    <!-- Toggled low-stock list -->
+
+    <div *ngIf="showLowStock && lowStockItems.length > 0" class="alert alert-warning mt-2">
+
+      <h3>Low Stock Products!! ⚠️</h3>
+
+      <ul>
+
+        <li *ngFor="let p of lowStockItems">{{ p.name }} - {{ p.quantity }} left</li>
+
+      </ul>
+
+    </div>
+
+
+ 
+
     <button class="btn btn-danger mt-auto" (click)="logout()">Logout</button>
+
   </div>
-  
+
+
+
   <!-- Main Content Wrapper with left margin to avoid sidebar overlap -->
+
   <div style="margin-left: 240px; padding: 20px;">
-  
+
+
+
     <!-- Navbar -->
+
     <header class="navbar navbar-expand-lg custom-navbar">
+
       <div class="container-fluid px-0">
+
         <div class="navbar-left">
-          <h1 class="navbar-brand m-0 text-white"> Manager Dashboard</h1>
+
+          <h1 class="navbar-brand m-0 text-white"> Manager Dashboard: {{outletName}}</h1>
+
         </div>
-        <div class="navbar-right ms-auto position-relative" (click)="toggleDropdown($event)" style="cursor: pointer;">
-          <img src="assets/staff.png" alt="Admin" class="profile-icon rounded-circle">
+
+       
+
+        <div class="navbar-right ms-auto position-relative" (click)="toggleDropdown($event)" style="cursor: pointer;color: white;">
+
+        <img src="assets/manager.jpg" alt="Admin" class="profile-icon rounded-circle">
+
         </div>
+
       </div>
+
     </header>
-  
+
+
+
     <br><br><br><br>
-  
+
+
+
     <!-- Add Category Form and Category/Product sections -->
+
     <div *ngIf="showingCategories">
-  
+
+
+
       <!-- Add Category Form -->
+
       <div class="add-category-form mb-5">
+
         <input type="text" [(ngModel)]="newCategoryName" placeholder="Category Name" class="form-control mb-2" />
+
         <button class="btn btn-outline-primary" (click)="addCategory()">Add Category</button>
+
       </div>
-  
+
+
+
       <!-- Category Section -->
+
       <div class="row g-4">
+
         <div class="col-md-4" *ngFor="let category of categories" (click)="toggleProducts(category)" style="cursor:pointer;">
+
           <div class="glass-card text-center p-5">
-            <button class="btn btn-sm btn-outline-danger position-absolute" 
+
+            <button class="btn btn-sm btn-outline-danger position-absolute"
+
                     style="top: 10px; right: 10px; z-index: 2;"
+
                     (click)="deleteCategory(category._id); $event.stopPropagation();"
+
                     title="Delete Category">
+
               Delete
+
             </button>
+
             <img
+
               [src]="category.image"
+
               alt="{{ category.name }}"
+
               style="width: 200px; height: 200px; object-fit: contain; object-position: center;"
+
             />
+
             <h5 class="text-dark mt-3 mb-0" style="font-family: Arial, Helvetica, sans-serif;">{{ category.name }}</h5>
+
           </div>
+
         </div>
+
       </div>
-  
+
+
+
       <!-- Product Section -->
+
       <div *ngIf="selectedCategoryId" class="mt-5">
+
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+
           <h4 class="text-secondary mb-2 mb-md-0">Products in {{ selectedCategoryName }}</h4>
+
           <button class="btn btn-outline-primary" (click)="showAddProductForm()">
+
             <i class="bi bi-plus-circle me-1"></i> Add Product
+
           </button>
+
         </div>
-  
+
+
+ 
+
+
+
         <!-- Product Cards -->
+
         <div class="row g-4">
+
           <div class="col-md-4" *ngFor="let product of products">
+
             <div class="gradient-card p-4 h-100 d-flex flex-column justify-content-between">
+
               <div>
+
                 <h5 class="fw-bold mb-3">{{ product.name }}</h5>
+
                 <label class="form-label">Capacity</label>
+
                 <input type="number" class="form-control mb-3" [(ngModel)]="product.capacity" />
+
               </div>
+
               <div class="d-flex justify-content-between">
+
                 <button class="btn btn-outline-light btn-sm" (click)="updateCapacity(product)">Update</button>
+
                 <button class="btn btn-outline-light btn-sm bg-danger" (click)="deleteProduct(product._id)">Delete</button>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
+
       </div>
-  
+
+
+ 
+
     </div>
-  
+
+
+
     <!-- Add Product Form as Separate View -->
+
     <div *ngIf="showingAddProductForm" class="card p-4 mb-4 border-0 shadow-sm" style="max-width: 600px;">
+
       <h4>Add New Product to {{ selectedCategoryName }}</h4>
+
       <div class="row g-3 mt-3">
+
         <div class="col-md-7">
+
           <input type="text" class="form-control" placeholder="Product Name" [(ngModel)]="newProduct.name" />
+
         </div>
+
         <div class="col-md-5">
+
           <input type="number" class="form-control" placeholder="Capacity" [(ngModel)]="newProduct.capacity" />
+
         </div>
+
         <div class="col-12">
+
           <button class="btn btn-success" (click)="addProduct()">Add Product</button>
+
           <button class="btn btn-secondary ms-2" (click)="showCategories()">Cancel</button>
+
         </div>
+
       </div>
+
     </div>
-  
+
+
+
     <!-- Bottom Section: Recent Activities & Notes -->
+
     <div class="row mt-5">
+
       <div class="col-md-6" style="box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); border-radius: 20px;">
+
         <div class="card shadow-sm p-4 h-100" style="border-color:#13395e; border-style: solid; border-width: 0px;">
+
           <h5 class="mb-3">Recent Activities</h5>
+
           <ul class="list-unstyled" style="max-height: 200px; overflow-y: auto;">
+
             <li *ngFor="let activity of recentActivities">• {{ activity }}</li>
+
           </ul>
+
         </div>
+
       </div>
+
       <div class="col-md-6" style="box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); border-radius: 20px;">
+
         <div class="card shadow-sm p-4 h-100" style="border-color:#13395e; border-style: solid; border-width: 0px;">
+
           <h5 class="mb-3">Internal Notes</h5>
+
           <textarea class="form-control" rows="6" [(ngModel)]="internalNotes" placeholder="Write your notes here..."></textarea>
+
         </div>
+
       </div>
+
     </div>
-  
+
+
+
   </div>
-  
